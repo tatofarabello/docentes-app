@@ -38,6 +38,9 @@ export class MateriasPage implements OnInit {
         promesaMaterias = this.profesorSrv.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
         await promesaMaterias;
       }
+    materias = materias.filter(function (elem, index, self) {
+      return index === self.indexOf(elem);
+    })
       this.inscripciones = registros;
       
       let promesaMisMaterias
@@ -202,6 +205,7 @@ export class MateriasPage implements OnInit {
                     let prom = this.profesorSrv.inscribirseAComision(com, materia).then(nuevo => console.log(nuevo));
                     await prom
                     existeComision = true;
+                    window.location.reload();
                   }
                 }
                 if (existeComision == false) {
@@ -239,6 +243,7 @@ export class MateriasPage implements OnInit {
                           await hola
                             promesa = this.profesorSrv.inscribirseAComision(comision2._id, materia).then(async nuevisimo => {
                               console.log('Esto es el registro de la inscripcion a la comision', nuevisimo);
+
                             });
                             await promesa
                             let registro = { id_materia: materia, id_comision: comision2._id }
@@ -273,10 +278,9 @@ export class MateriasPage implements OnInit {
   }
 
 
-  public async borrarMateria(materia:Materia) {
-
+  public async borrarMateria(materia: Materia) {
     const cuerpoAleta = {
-      header: "Desmatricularese",
+      header: "Desmatricularse",
       subHeader: "¿Seguro que desea desmatricularse de " + materia.nombre +'?',
       message: 'Perderá toda la información asociada a la materia',
       buttons: [
