@@ -6,6 +6,7 @@ import { ProfesorService } from '../services/profesor.service';
 import { Materia } from '../model/materia';
 import { async } from '@angular/core/testing';
 import { Materia_Comision } from '../model/materia_comison';
+import { Aula_Comision } from '../model/aula_comision';
 
 
 @Component({
@@ -32,12 +33,22 @@ export class MateriasPage implements OnInit {
       let promesaComision = this.profesorSrv.getComisionesDeProfesor().then(function (data: Array<Profesor_Comision>) { registros = data });
       await promesaComision;
       let promesaMaterias
-      let materias = [];
+    let materias = [];
+    let comisionesSinAula = [];
       for (let registro of registros) {
-  
         promesaMaterias = this.profesorSrv.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
+        this.profesorSrv.getAulaDeComision(registro.id_comision).then(function (com: Array <Aula_Comision> = []) {
+          console.log('com es:', com)
+          if (com.length == 0) {
+            comisionesSinAula.push(registro.id_comision)
+          }});
         await promesaMaterias;
+
       }
+    console.log('las comisiones sin aula son: ', comisionesSinAula)
+    if (comisionesSinAula.length > 0) {
+      this.warningAulas();
+    }
     materias = materias.filter(function (elem, index, self) {
       return index === self.indexOf(elem);
     })
@@ -250,7 +261,6 @@ export class MateriasPage implements OnInit {
                             let ultimaPromesa = this.profesorSrv.crearMateria_Comision(registro).then(materiacomision => console.log('esta es la materia comision: ', materiacomision));
                             await ultimaPromesa
 
-                          console.log('te bajo todos los dientes')
                           window.location.reload();
 
                         }
@@ -317,4 +327,20 @@ export class MateriasPage implements OnInit {
     const alert = await this.alertController.create(cuerpoAleta)
     await alert.present();
   }
+  public async warningAulas(){
+
+    const cuerpoAleta = {
+      header: "Atención",
+      
+      message: 'Tiene comisiones sin aulas',
+      buttons: ["ok"]
+    };
+    const alerta = await this.alertController.create(cuerpoAleta);
+
+    await alerta.present();
+
+ 
+    
+  }
+
 }

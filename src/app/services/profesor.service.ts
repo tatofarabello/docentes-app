@@ -83,7 +83,11 @@ export class ProfesorService implements OnInit {
   }
 
   async getProfesoresDeComision(id_comision: string) {
-    return await this.httpClient.get(this.path + '/profesor_de_comisiones/' + this.id).toPromise();
+    return await this.httpClient.get(this.path + '/profesor_de_comisiones/' + id_comision).toPromise();
+  }
+
+  async getAulaDeComision(id_comision: string) {
+    return await this.httpClient.get(this.path + '/aula_de_comision/' + id_comision).toPromise();
   }
   
 }
