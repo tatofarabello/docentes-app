@@ -70,16 +70,20 @@ export class ProfesorService implements OnInit {
     return await this.httpClient.get(this.path + '/comisiones_de_profesor/' + this.id).toPromise();
   }
 
-  inscribirseAComision(comision, materia) {
+  async inscribirseAComision(comision, materia) {
     console.log('materia: ', materia,' comision: ', comision, ' profesor:', this.id)
     let registro = { id_comision: comision, id_profesor: this.id ,id_materia: materia};
-    return this.httpClient.post(this.path + '/profesor_comision', registro);
+    return await this.httpClient.post(this.path + '/profesor_comision', registro).toPromise();
   }
 
   desmatricularseAComision(id_registro: String) {
     console.log('registro a borrar:' , id_registro)
     return this.httpClient.delete(this.path + '/profesor_comision/'+ id_registro);
     
+  }
+
+  async getProfesoresDeComision(id_comision: string) {
+    return await this.httpClient.get(this.path + '/profesor_de_comisiones/' + this.id).toPromise();
   }
   
 }

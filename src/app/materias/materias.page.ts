@@ -199,7 +199,8 @@ export class MateriasPage implements OnInit {
                 var existeComision = false;
                 for (let com of comisiones) {
                   if (com == comision) {
-                    this.profesorSrv.inscribirseAComision(com, materia).subscribe(nuevo => console.log(nuevo));
+                    let prom = this.profesorSrv.inscribirseAComision(com, materia).then(nuevo => console.log(nuevo));
+                    await prom
                     existeComision = true;
                   }
                 }
@@ -227,20 +228,26 @@ export class MateriasPage implements OnInit {
                         }
                       }, {
                         text: 'Ok',
-                        handler: data => {
+                        handler: async data => {
                           console.log('Cantidad de clases:', data);
                           let com = { nombre: comision.nombre, clasesTotales: data.clasesTotales }
-                          this.profesorSrv.crearComision(com).then((comision: Comision) => {
-                            console.log('soy la nueva comision que mueve el cucumelo', comision);
-                            this.profesorSrv.inscribirseAComision(comision._id, materia).subscribe(nuevisimo => {
-                              console.log('esto es nuevisimo', nuevisimo);
-                              let registro = { id_materia: materia, id_comision: comision._id }
-                              this.profesorSrv.crearMateria_Comision(registro).then(materiacomision => console.log('esta es la materia comision: ', materiacomision));
+                          let comision2
+                         let hola = this.profesorSrv.crearComision(com).then((comis: Comision) => {
+                           console.log('La nueva comisión es: ', comis);
+                           comision2 = comis
+                         })
+                          await hola
+                            promesa = this.profesorSrv.inscribirseAComision(comision2._id, materia).then(async nuevisimo => {
+                              console.log('Esto es el registro de la inscripcion a la comision', nuevisimo);
                             });
-                      
-                            //post de materia-comision
+                            await promesa
+                            let registro = { id_materia: materia, id_comision: comision2._id }
+                            let ultimaPromesa = this.profesorSrv.crearMateria_Comision(registro).then(materiacomision => console.log('esta es la materia comision: ', materiacomision));
+                            await ultimaPromesa
 
-                          })
+                          console.log('te bajo todos los dientes')
+                          window.location.reload();
+
                         }
                       }
                     ]
@@ -251,7 +258,6 @@ export class MateriasPage implements OnInit {
                 }
               
 
-                //window.location.reload();
                 //Falta desabilitar boton si no hay comision seleccionada
                             
               }}
