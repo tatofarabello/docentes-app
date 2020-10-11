@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { Comision } from '../model/comision';
 import { Profesor_Comision } from '../model/profesor_comision';
 import { ProfesorService } from '../services/profesor.service';
+import { MateriaService } from '../services/materia.service';
 import { Materia } from '../model/materia';
 import { async } from '@angular/core/testing';
 import { Materia_Comision } from '../model/materia_comison';
@@ -19,14 +20,21 @@ export class MateriasPage implements OnInit {
   public misMaterias;
   private todasLasMaterias;
   private inscripciones : Array<Profesor_Comision>;
+  private id_materia_activa: string='';
 
   
-  constructor(private alertController: AlertController, private profesorSrv: ProfesorService) { }
+  constructor(private alertController: AlertController, private profesorSrv: ProfesorService, private materiaSrv: MateriaService, private loading: LoadingController) { }
   
   async ngOnInit() { 
-       
+    const loading = await this.loading.create({  message: 'Cargando',
+    //duration: 2000,
+      spinner: 'bubbles'
+    });
+    loading.present();
+    await this.profesorSrv.ngOnInit()
+    loading.dismiss();
       this.profesorSrv.id = sessionStorage.getItem('id');
-      this.profesorSrv.getMaterias().subscribe(datos => {
+      this.materiaSrv.getMaterias().subscribe(datos => {
         this.todasLasMaterias = datos
       });
       let registros
@@ -35,9 +43,9 @@ export class MateriasPage implements OnInit {
       let promesaMaterias
     let materias = [];
     let comisionesSinAula = [];
-      for (let registro of registros) {
-        promesaMaterias = this.profesorSrv.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
-        await this.profesorSrv.getAulaDeComision(registro.id_comision).then(function (com: Array <Aula_Comision> = []) {
+      for (let registro of this.profesorSrv.inscripciones) {
+        promesaMaterias = this.materiaSrv.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
+        await this.materiaSrv.getAulaDeComision(registro.id_comision).then(function (com: Array <Aula_Comision> = []) {
           console.log('com es:', com)
           if (com.length == 0) {
             comisionesSinAula.push(registro.id_comision)
@@ -52,17 +60,19 @@ export class MateriasPage implements OnInit {
     materias = materias.filter(function (elem, index, self) {
       return index === self.indexOf(elem);
     })
-      this.profesorSrv.inscripciones = registros;
-      
+    
       let promesaMisMaterias
       let mis_Materias=[]
       console.log('las materias son: ',materias)
       for (let materia of materias) {
-        promesaMisMaterias = this.profesorSrv.getMateria(materia).then(function (data) { console.log('la materia tiene' , data) ; mis_Materias.push(data) })
+        promesaMisMaterias = this.materiaSrv.getMateria(materia).then(function (data) { console.log('la materia tiene' , data) ; mis_Materias.push(data) })
       }
       await promesaMisMaterias;
       this.misMaterias=mis_Materias
-      console.log(this.misMaterias)
+    console.log(this.misMaterias)
+    
+    if (this.id_materia_activa == undefined || this.misMaterias.filter(materia => materia._id==this.id_materia_activa).length == 0 ) this.materiaSrv.obtenerComisionesDeMateria(this.misMaterias[0]._id);
+    else this.materiaSrv.obtenerComisionesDeMateria(this.id_materia_activa);
   }
   
   public async elegirCarrera() {
@@ -144,10 +154,10 @@ export class MateriasPage implements OnInit {
     await alert.present();
   }
 
-  public async elegirComision(materia, comisionNueva) {
+  public async elegirComision(materia=this.materiaSrv.miMateria._id, comisionNueva) {
     let comisiones
     let cuerpo = [];
-    this.profesorSrv.getComisionesDeMaterias(materia).subscribe(async datos => {
+    this.materiaSrv.getComisionesDeMaterias(materia).subscribe(async datos => {
       comisiones = datos
       console.log(comisiones)
      
@@ -158,7 +168,7 @@ export class MateriasPage implements OnInit {
       
           console.log('buscar comision con nro de id ' + comision)
         
-          promesa = this.profesorSrv.getComision(comision).then(function (data: Comision) {
+          promesa = this.materiaSrv.getComision(comision).then(function (data: Comision) {
           
             cuerpo.push({
               name: 'checkbox' + data.id,
@@ -219,7 +229,7 @@ export class MateriasPage implements OnInit {
                     let prom = this.profesorSrv.inscribirseAComision(com, materia).then(nuevo => console.log(nuevo));
                     await prom
                     existeComision = true;
-                    window.location.reload();
+                    this.ngOnInit();
                   }
                 }
                 if (existeComision == false) {
@@ -250,7 +260,7 @@ export class MateriasPage implements OnInit {
                           console.log('Cantidad de clases:', data);
                           let com = { nombre: comision.nombre, clasesTotales: data.clasesTotales }
                           let comision2
-                         let hola = this.profesorSrv.crearComision(com).then((comis: Comision) => {
+                         let hola = this.materiaSrv.crearComision(com).then((comis: Comision) => {
                            console.log('La nueva comisión es: ', comis);
                            comision2 = comis
                          })
@@ -261,10 +271,10 @@ export class MateriasPage implements OnInit {
                             });
                             await promesa
                             let registro = { id_materia: materia, id_comision: comision2._id }
-                            let ultimaPromesa = this.profesorSrv.crearMateria_Comision(registro).then(materiacomision => console.log('esta es la materia comision: ', materiacomision));
+                            let ultimaPromesa = this.materiaSrv.crearMateria_Comision(registro).then(materiacomision => console.log('esta es la materia comision: ', materiacomision));
                             await ultimaPromesa
 
-                          window.location.reload();
+                          this.ngOnInit();
 
                         }
                       }
@@ -351,7 +361,7 @@ export class MateriasPage implements OnInit {
             }
             
             console.log('Confirm OK');
-            window.location.reload();
+            this.ngOnInit();
                           
           }
         }
@@ -375,6 +385,55 @@ export class MateriasPage implements OnInit {
 
  
     
+  }
+
+  async mostrarComisiones(id_materia) {
+    if (this.id_materia_activa == id_materia) this.id_materia_activa = '';
+    else this.id_materia_activa = id_materia;
+    this.materiaSrv.obtenerComisionesDeMateria(id_materia);
+
+
+
+
+    
+  }
+
+
+  public async borrarComision(comision:Comision) {
+
+    const cuerpoAleta = {
+      header: "Desmatricularese",
+      subHeader: "¿Seguro que desea desmatricularse de " + comision.nombre +'?',
+      message: 'Perderá toda la información asociada a la comision',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        },
+        {
+          text: 'Ok',
+          handler:async () => {
+                      
+            let inscripcion: Array<Profesor_Comision> = this.profesorSrv.inscripciones.filter(inscripcion => inscripcion.id_comision==comision._id )
+            this.profesorSrv.desmatricularseAComision(inscripcion[0]._id as String).subscribe(nuevo => nuevo);
+            // console.log('borrara esta inscripcion: ', inscripcion)
+            console.log('Confirm OK');
+            this.ngOnInit();
+          }
+            
+            
+                          
+          
+        }
+      ]
+    };
+  
+    const alert = await this.alertController.create(cuerpoAleta)
+    await alert.present();
   }
 
 }

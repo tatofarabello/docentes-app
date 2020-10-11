@@ -42,6 +42,24 @@ export class MateriaService {
     
   }
 
+  async crearComision(comision) {
+    return await this.httpClient.post(this.path + '/comision', comision).toPromise();
+    
+  }
+
+  async crearMateria_Comision(registro) {
+    return await this.httpClient.post(this.path + '/materia_comision', registro).toPromise();
+    
+  }    
+
+  async getProfesoresDeComision(id_comision: string) {
+    return await this.httpClient.get(this.path + '/profesor_de_comisiones/' + id_comision).toPromise();
+  }
+
+  async getAulaDeComision(id_comision: string) {
+    return await this.httpClient.get(this.path + '/aula_de_comision/' + id_comision).toPromise();
+  }
+
   async obtenerComisionesDeMateria(id_materia:String) {
     let materia:Materia;
     let comisiones = [];
