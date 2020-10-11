@@ -116,13 +116,20 @@ export class MateriasPage implements OnInit {
   }
   public async elegirMateria() {
     let cuerpo = [];
+    
     for (let mat of this.todasLasMaterias) {
-      cuerpo.push({
-        name: 'checkbox' + mat.id,
-        type: 'radio',
-        label: mat.nombre,
-        value: mat._id
+      let bandera =true
+      for (let miMat of this.misMaterias) {
+        if (miMat._id == mat._id) bandera = false;
+      }
+      if (bandera==true)
+      {  cuerpo.push( {
+          name: 'checkbox'+mat.id,
+          type: 'radio',
+          label: mat.nombre,
+          value: mat._id
       })
+      };
         
     }
 
@@ -154,7 +161,7 @@ export class MateriasPage implements OnInit {
     await alert.present();
   }
 
-  public async elegirComision(materia=this.materiaSrv.miMateria._id, comisionNueva) {
+  public async elegirComision(materia = this.materiaSrv.miMateria._id, comisionNueva = false) {
     let comisiones
     let cuerpo = [];
     this.materiaSrv.getComisionesDeMaterias(materia).subscribe(async datos => {
@@ -164,23 +171,28 @@ export class MateriasPage implements OnInit {
       let promesas
       let promesa
       if (comisionNueva == false) {
-        for (let comision of comisiones) {
-      
-          console.log('buscar comision con nro de id ' + comision)
-        
-          promesa = this.materiaSrv.getComision(comision).then(function (data: Comision) {
-          
-            cuerpo.push({
-              name: 'checkbox' + data.id,
-              type: 'radio',
-              label: data.nombre,
-              value: data._id
-            })
+        let promesa
+        for (let id_comision of comisiones) {
+          console.log('buscar comision con nro de id ' + id_comision)
+          let comisionCompleta: Comision;
+          promesa= this.materiaSrv.getComision(id_comision).then(function(data:Comision){comisionCompleta=data})
+          await promesa
+          console.log('en data hay', comisionCompleta)
   
-            console.log('hice el push')
-          
+          let bandera =true
+          for (let miCom of this.materiaSrv.misComisiones) {
+            if (miCom._id == comisionCompleta._id) bandera = false;
+          }
+          if (bandera==true)
+          {cuerpo.push({
+            name: 'checkbox' + comisionCompleta.id,
+            type: 'radio',
+            label: comisionCompleta.nombre,
+            value: comisionCompleta._id
           })
-          
+          };
+  
+          console.log('hice el push')
         }
       }
       await promesa
