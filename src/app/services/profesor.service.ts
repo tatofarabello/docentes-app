@@ -1,12 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import { from } from 'rxjs';
 import { Profesor } from '../model/profesor';
+import {Profesor_Comision} from '../model/profesor_comision'
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfesorService implements OnInit {
+  public inscripciones: Array<Profesor_Comision>;
   private profesor;
   public id;
   private path = "http://localhost:3000";

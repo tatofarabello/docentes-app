@@ -37,7 +37,7 @@ export class MateriasPage implements OnInit {
     let comisionesSinAula = [];
       for (let registro of registros) {
         promesaMaterias = this.profesorSrv.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
-        this.profesorSrv.getAulaDeComision(registro.id_comision).then(function (com: Array <Aula_Comision> = []) {
+        await this.profesorSrv.getAulaDeComision(registro.id_comision).then(function (com: Array <Aula_Comision> = []) {
           console.log('com es:', com)
           if (com.length == 0) {
             comisionesSinAula.push(registro.id_comision)
@@ -46,13 +46,13 @@ export class MateriasPage implements OnInit {
 
       }
     console.log('las comisiones sin aula son: ', comisionesSinAula)
-    if (comisionesSinAula.length > 0) {
+    if (comisionesSinAula.length != 0) {
       this.warningAulas();
     }
     materias = materias.filter(function (elem, index, self) {
       return index === self.indexOf(elem);
     })
-      this.inscripciones = registros;
+      this.profesorSrv.inscripciones = registros;
       
       let promesaMisMaterias
       let mis_Materias=[]
@@ -205,6 +205,9 @@ export class MateriasPage implements OnInit {
           }, {
             text: 'Ok',
             handler: async (comision) => {
+              if (comision == undefined) {
+                this.alertaDeNoSeleccion(materia);
+              }
               if (comision == true) this.elegirComision(materia, true);
               else {
                 console.log('Confirm OK');
@@ -271,6 +274,7 @@ export class MateriasPage implements OnInit {
               
 
                 }
+
               
 
                 //Falta desabilitar boton si no hay comision seleccionada
@@ -287,6 +291,36 @@ export class MateriasPage implements OnInit {
     });
   }
 
+  public async alertaDeNoSeleccion(materia) {
+
+    const cuerpoAleta = {
+      header: "ERROR",
+      subHeader: "No selecciono ninguna comision",
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        },
+        {
+          text: 'Ok',
+          handler:async () => {
+            this.elegirComision(materia, false);    
+        }
+            
+            
+                          
+          
+        }
+      ]
+    };
+  
+    const alert = await this.alertController.create(cuerpoAleta)
+    await alert.present();
+  }
 
   public async borrarMateria(materia: Materia) {
     const cuerpoAleta = {
