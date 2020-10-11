@@ -6,7 +6,6 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./comision.page.scss'],
 })
 export class ComisionPage implements OnInit {
-
   constructor() { }
 
   ngOnInit() {

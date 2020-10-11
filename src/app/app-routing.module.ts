@@ -21,7 +21,17 @@ const routes: Routes = [
   },
   {
     path: 'materias',
-    loadChildren: () => import('./materias/materias.module').then( m => m.MateriasPageModule)
+    children: [{
+      path: "",
+      loadChildren: () => import('./materias/materias.module').then( m => m.MateriasPageModule)
+      
+    },
+    {
+      path: ':id',
+      loadChildren: () => import('./comision/comision.module').then( m => m.ComisionPageModule)
+    },
+    ]
+    
   },
   {
     path: 'materia',
