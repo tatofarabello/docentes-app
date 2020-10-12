@@ -53,9 +53,9 @@ export class ProfesorService implements OnInit {
     return await this.httpClient.post(this.path + '/profesor_comision', registro).toPromise();
   }
 
-  desmatricularseAComision(id_registro: String) {
+  async desmatricularseAComision(id_registro: String) {
     console.log('registro a borrar:' , id_registro)
-    return this.httpClient.delete(this.path + '/profesor_comision/'+ id_registro);
+    return await this.httpClient.delete(this.path + '/profesor_comision/'+ id_registro).toPromise();
     
   }
 

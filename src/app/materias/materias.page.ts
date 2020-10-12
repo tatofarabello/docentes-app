@@ -17,7 +17,7 @@ import { Aula_Comision } from '../model/aula_comision';
 })
 export class MateriasPage implements OnInit {
 
-  public misMaterias;
+  public misMaterias: Array<Materia>;
   private todasLasMaterias;
   private inscripciones : Array<Profesor_Comision>;
   private id_materia_activa: string='';
@@ -64,15 +64,19 @@ export class MateriasPage implements OnInit {
       let promesaMisMaterias
       let mis_Materias=[]
       console.log('las materias son: ',materias)
-      for (let materia of materias) {
+    for (let materia of materias) {
         promesaMisMaterias = this.materiaSrv.getMateria(materia).then(function (data) { console.log('la materia tiene' , data) ; mis_Materias.push(data) })
       }
       await promesaMisMaterias;
       this.misMaterias=mis_Materias
-    console.log(this.misMaterias)
-    
-    if (this.id_materia_activa == undefined || this.misMaterias.filter(materia => materia._id==this.id_materia_activa).length == 0 ) this.materiaSrv.obtenerComisionesDeMateria(this.misMaterias[0]._id);
+    console.log('Mis materias son estas: ', this.misMaterias)
+    if (this.misMaterias.length > 0)
+{    if (this.id_materia_activa == undefined || this.misMaterias.filter(materia => materia._id==this.id_materia_activa).length == 0 ) this.materiaSrv.obtenerComisionesDeMateria(this.misMaterias[0]._id);
     else this.materiaSrv.obtenerComisionesDeMateria(this.id_materia_activa);
+      console.log('Pasé el if')
+    };
+  
+
   }
   
   public async elegirCarrera() {
@@ -365,10 +369,11 @@ export class MateriasPage implements OnInit {
             await promesaComision;
             console.log('Registros es:',registros)
             for (let inscripcion of registros) {
-              
+              console.log('el id de la materia es: ', materia._id)
               if (inscripcion.id_materia == materia._id){
                 //borrar el registro de inscripcion
-                this.profesorSrv.desmatricularseAComision(inscripcion._id as String).subscribe(nuevo => nuevo);
+                
+                await this.profesorSrv.desmatricularseAComision(inscripcion._id as String).then(nuevo => nuevo);
               }
             }
             
@@ -431,7 +436,7 @@ export class MateriasPage implements OnInit {
           handler:async () => {
                       
             let inscripcion: Array<Profesor_Comision> = this.profesorSrv.inscripciones.filter(inscripcion => inscripcion.id_comision==comision._id )
-            this.profesorSrv.desmatricularseAComision(inscripcion[0]._id as String).subscribe(nuevo => nuevo);
+            await this.profesorSrv.desmatricularseAComision(inscripcion[0]._id as String).then(nuevo => nuevo);
             // console.log('borrara esta inscripcion: ', inscripcion)
             console.log('Confirm OK');
             this.ngOnInit();
