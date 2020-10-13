@@ -32,7 +32,7 @@ export class MateriasPage implements OnInit {
     });
     loading.present();
     await this.profesorSrv.ngOnInit()
-    loading.dismiss();
+   
       this.profesorSrv.id = sessionStorage.getItem('id');
       this.materiaSrv.getMaterias().subscribe(datos => {
         this.todasLasMaterias = datos
@@ -53,10 +53,7 @@ export class MateriasPage implements OnInit {
         await promesaMaterias;
 
       }
-    console.log('las comisiones sin aula son: ', comisionesSinAula)
-    if (comisionesSinAula.length != 0) {
-      this.warningAulas();
-    }
+   
     materias = materias.filter(function (elem, index, self) {
       return index === self.indexOf(elem);
     })
@@ -75,8 +72,11 @@ export class MateriasPage implements OnInit {
     else this.materiaSrv.obtenerComisionesDeMateria(this.id_materia_activa);
       console.log('Pasé el if')
     };
-  
-
+    
+    console.log('las comisiones sin aula son: ', comisionesSinAula)
+    if (comisionesSinAula.length != 0) {
+      this.warningAulas(loading);
+    }
   }
   
   public async elegirCarrera() {
@@ -116,7 +116,7 @@ export class MateriasPage implements OnInit {
       ]
     });
 
-    await alert.present();
+    
   }
   public async elegirMateria() {
     let cuerpo = [];
@@ -388,7 +388,7 @@ export class MateriasPage implements OnInit {
     const alert = await this.alertController.create(cuerpoAleta)
     await alert.present();
   }
-  public async warningAulas(){
+  public async warningAulas(loading){
 
     const cuerpoAleta = {
       header: "Atención",
@@ -397,7 +397,7 @@ export class MateriasPage implements OnInit {
       buttons: ["ok"]
     };
     const alerta = await this.alertController.create(cuerpoAleta);
-
+    loading.dismiss();
     await alerta.present();
 
  

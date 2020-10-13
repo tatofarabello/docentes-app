@@ -12,10 +12,9 @@
     <h1>{{miComision.nombre}}</h1>
   </ion-item>
 
-    <ion-icon slot="start" size="2" name=  <ion-button (click)="configurarComision();" color="success" expand="block" fill="clear" shape="round">
-"build-outline" ></ion-icon>
-    <ion-datetime displayFormat="DDDD MMM D, YYYY" min="2005" max="2016" value="2008-09-02"> </ion-datetime>
-    Configurar Comisión
+  <ion-button color="success" expand="block" fill="clear" shape="round" [routerLink]="['ConfigurarClase']">
+    <ion-icon slot="start" size="2" name= "build-outline" ></ion-icon>
+      Configurar Comisión
   </ion-button>
   
 

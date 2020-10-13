@@ -28,7 +28,15 @@ const routes: Routes = [
     },
     {
       path: ':id',
-      loadChildren: () => import('./comision/comision.module').then( m => m.ComisionPageModule)
+      children: [{
+        path: "",
+        loadChildren: () => import('./comision/comision.module').then(m => m.ComisionPageModule)
+      },
+        {
+        path: 'ConfigurarClase',
+        loadChildren: () => import('./fechayhora/fechayhora.module').then( m => m.FechayhoraPageModule)
+        }
+      ]
     },
     ]
     

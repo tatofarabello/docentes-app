@@ -1,41 +1,45 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>fechayhora</ion-title>
+    <ion-title>Configuración de clase</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <!-- <ion-item>
-    <ion-label position="floating"><b>Fecha de Inicio</b></ion-label>
+  <ion-item>
+    <ion-label *ngIf="fechaInicio==control"><b>Ingresar Fecha de Inicio</b></ion-label>
+    <ion-label *ngIf="fechaInicio!=control" position="floating"><b>Fecha de Inicio</b></ion-label>
     <ion-datetime displayFormat="DDDD MMM D, YYYY" min="2020" max="2050" [(ngModel)]="fechaInicio"></ion-datetime>  
 
   </ion-item>
 
   
   <ion-item>
-    <ion-label position="floating"><b>Hora</b></ion-label>
+    <ion-label *ngIf="hora==control"><b>Ingresar Hora de Inicio</b></ion-label>
+    <ion-label *ngIf="hora!=control" position="floating"><b>Hora</b></ion-label>
     <ion-datetime displayFormat="HH:mm" [(ngModel)]="hora"></ion-datetime>
 
+  </ion-item>
+
+  <!-- <ion-item>
+    <ion-label position="floating"><b>Fecha de Inicio</b></ion-label>
+    <ion-datetime displayFormat="D MMM YYYY H:mm" min="2020" max="2050" [(ngModel)]="fechaInicio"></ion-datetime>
   </ion-item> -->
 
   <ion-item>
-    <ion-label position="floating"><b>Fecha de Inicio</b></ion-label>
-    <ion-datetime displayFormat="D MMM YYYY H:mm" min="2020" max="2050" [(ngModel)]="fechaInicio"></ion-datetime>
-  </ion-item>
-
-  <ion-item>
-    <ion-label position="floating"><b>Duración</b></ion-label>
-    <ion-datetime displayFormat="HH:mm"  min="00:00" max="06:00" [(ngModel)]="duracion"></ion-datetime>
+    <ion-label *ngIf="duracion==control"><b>Ingresar Duración</b></ion-label>
+    <ion-label *ngIf="duracion!=control" position="floating"><b>Duración</b></ion-label>
+    <ion-datetime displayFormat="HH:mm"  min="00:00" max="05:59" [(ngModel)]="duracion"></ion-datetime>
 
   </ion-item>
 
 
 
   <ion-item (click)="elegirAula()">
-    <ion-label><b>Aula</b></ion-label>
+    <ion-label *ngIf="aulaDeComision==undefined"><b>Ingresar Aula</b></ion-label>
+    <ion-label *ngIf="aulaDeComision!=undefined" position="floating"><b>Aula</b></ion-label>
+    <ion-input *ngIf="aulaDeComision!=undefined" [(ngModel)]="aulaDeComision.nombre"></ion-input>
   </ion-item>
-
-  <ion-button (click)='confirmar()' color="primary" expand="block">Confirmar</ion-button>
+  <ion-button (click)='confirmar()' color="primary" expand="block" [disabled]="fechaInicio==control||hora==control||duracion==control||aulaDeComision==undefined">Confirmar</ion-button>
 
 
 </ion-content>
