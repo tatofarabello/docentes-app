@@ -4,6 +4,8 @@ import { LoadingController } from '@ionic/angular';
 import { Comision } from '../model/comision';
 import { MateriaService } from '../services/materia.service';
 import { MyComponent } from '../method/fecha';
+import { Clase } from '../model/clase';
+import { ClaseService } from '../services/clase.service';
 
 @Component({
   selector: 'app-comision',
@@ -11,24 +13,23 @@ import { MyComponent } from '../method/fecha';
   styleUrls: ['./comision.page.scss'],
 })
 export class ComisionPage implements OnInit {
-  public miComision = new Comision;
-  constructor(private activeteRoute:ActivatedRoute, private materiaSrv: MateriaService,private loading:LoadingController) { }
+  
+  constructor(private activeteRoute:ActivatedRoute, private materiaSrv: MateriaService,private loading:LoadingController,private claseSrv:ClaseService) { }
 
   async ngOnInit() {    
     const loading = await this.loading.create({  message: 'Cargando',
     //duration: 2000,
       spinner: 'bubbles'
     });  
-    let miComision:Comision;
-    this.activeteRoute.paramMap.subscribe(
-      async paramMap => {
-          await this.materiaSrv.getComision(paramMap.get("id")).then((datos:Comision) => {
-            miComision = datos;
-          });
-        this.miComision = miComision;
-        loading.dismiss()
-      });
+    this.claseSrv.obtenerClasesDeComision(this.materiaSrv.comsionActiva._id).subscribe((a:Array<Clase>) => {
+      this.claseSrv.clasesActivas = a;
+      loading.dismiss();
+      
+    });
     loading.present();
+    
+    console.log(this.claseSrv.clasesActivas) 
+
   };
 
   configurarComision() {

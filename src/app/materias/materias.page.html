@@ -16,7 +16,7 @@
   </ion-item>
   <ion-list *ngIf="materiaSrv.materiaActiva._id==materia.materia._id" >
     <ion-item *ngFor="let comision of materiaSrv.misComisiones" >  
-      <ion-label [routerLink]="['/materias' ,comision._id]">{{comision.nombre}}</ion-label>
+      <ion-label (click)=setComisionActiva(comision) [routerLink]="['/materias' ,comision._id]">{{comision.nombre}}</ion-label>
       <ion-icon slot="end" name="trash-outline"  (click)="borrarComision(comision);"></ion-icon>
     </ion-item>
     <ion-item>

@@ -40,47 +40,6 @@ export class MateriasPage implements OnInit {
       });
     await this.materiaSrv.getMateriasDeProfesor();
     loading.dismiss()
-    // let registros
-    // let promesaComision = this.profesorSrv.getComisionesDeProfesor().then(function (data: Array<Profesor_Comision>) { registros = data });
-    // await promesaComision;
-    //   let promesaMaterias
-    // let materias = [];
-    // let comisionesSinAula = [];
-    //   for (let registro of this.profesorSrv.inscripciones) {
-    //     promesaMaterias = this.materiaSrv.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
-    //     await this.materiaSrv.getAulaDeComision(registro.id_comision).then(function (com: Array <Aula_Comision> = []) {
-    //       console.log('com es:', com)
-    //       if (com.length == 0) {
-    //         comisionesSinAula.push(registro.id_comision)
-    //       }});
-    //     await promesaMaterias;
-
-    //   }
-   
-    // materias = materias.filter(function (elem, index, self) {
-    //   return index === self.indexOf(elem);
-    // })
-    
-    //   let promesaMisMaterias
-    //   let mis_Materias=[]
-    //   console.log('las materias son: ',materias)
-    // for (let materia of materias) {
-    //     promesaMisMaterias = this.materiaSrv.getMateria(materia).then(function (data) { console.log('la materia tiene' , data) ; mis_Materias.push(data) })
-    //   }
-    //   await promesaMisMaterias;
-    //   this.misMaterias=mis_Materias
-//     console.log('Mis materias son estas: ', this.materiaSrv.misMaterias)
-//     if (this.misMaterias.length > 0)
-// {    if (this.id_materia_activa == undefined || this.materiaSrv.misMaterias.filter(materia => materia.materia._id==this.id_materia_activa).length == 0 ) this.materiaSrv.obtenerComisionesDeMateria(this.misMaterias[0]._id);
-//     else this.materiaSrv.obtenerComisionesDeMateria(this.id_materia_activa);
-//       console.log('Pasé el if')
-//     };
-    
-    // console.log('las comisiones sin aula son: ', comisionesSinAula)
-    // if (comisionesSinAula.length != 0) {
-    //   this.warningAulas(loading);
-    // }
-    
   }
   
   public async elegirCarrera() {
@@ -459,4 +418,9 @@ export class MateriasPage implements OnInit {
     await alert.present();
   }
 
+
+  setComisionActiva(comision)
+  {
+    this.materiaSrv.comsionActiva = comision;
+  }
 }
