@@ -409,10 +409,10 @@ export class MateriasPage implements OnInit {
   }
 
   async mostrarComisiones(id_materia) {
-    console.log(this.materiaSrv.materiaActiva);
+    
     if (this.materiaSrv.materiaActiva._id == id_materia) this.materiaSrv.materiaActiva= {nombre:'',_id:''};
     else 
-    { this.id_materia_activa = id_materia;
+    { 
       for (let materiaAMostrar of this.materiaSrv.misMaterias) {
       if (materiaAMostrar.materia._id == id_materia) {
         this.materiaSrv.materiaActiva = materiaAMostrar.materia;
