@@ -17,7 +17,7 @@ import { Aula_Comision } from '../model/aula_comision';
 })
 export class MateriasPage implements OnInit {
 
-  public misMaterias: Array<Materia>;
+  public micComisiones: Array<Comision>;
   private todasLasMaterias;
   private inscripciones : Array<Profesor_Comision>;
   private id_materia_activa: string='';
@@ -36,47 +36,51 @@ export class MateriasPage implements OnInit {
       this.profesorSrv.id = sessionStorage.getItem('id');
       this.materiaSrv.getMaterias().subscribe(datos => {
         this.todasLasMaterias = datos
+        
       });
-      let registros
-      let promesaComision = this.profesorSrv.getComisionesDeProfesor().then(function (data: Array<Profesor_Comision>) { registros = data });
-      await promesaComision;
-      let promesaMaterias
-    let materias = [];
-    let comisionesSinAula = [];
-      for (let registro of this.profesorSrv.inscripciones) {
-        promesaMaterias = this.materiaSrv.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
-        await this.materiaSrv.getAulaDeComision(registro.id_comision).then(function (com: Array <Aula_Comision> = []) {
-          console.log('com es:', com)
-          if (com.length == 0) {
-            comisionesSinAula.push(registro.id_comision)
-          }});
-        await promesaMaterias;
+    await this.materiaSrv.getMateriasDeProfesor();
+    loading.dismiss()
+    // let registros
+    // let promesaComision = this.profesorSrv.getComisionesDeProfesor().then(function (data: Array<Profesor_Comision>) { registros = data });
+    // await promesaComision;
+    //   let promesaMaterias
+    // let materias = [];
+    // let comisionesSinAula = [];
+    //   for (let registro of this.profesorSrv.inscripciones) {
+    //     promesaMaterias = this.materiaSrv.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
+    //     await this.materiaSrv.getAulaDeComision(registro.id_comision).then(function (com: Array <Aula_Comision> = []) {
+    //       console.log('com es:', com)
+    //       if (com.length == 0) {
+    //         comisionesSinAula.push(registro.id_comision)
+    //       }});
+    //     await promesaMaterias;
 
-      }
+    //   }
    
-    materias = materias.filter(function (elem, index, self) {
-      return index === self.indexOf(elem);
-    })
+    // materias = materias.filter(function (elem, index, self) {
+    //   return index === self.indexOf(elem);
+    // })
     
-      let promesaMisMaterias
-      let mis_Materias=[]
-      console.log('las materias son: ',materias)
-    for (let materia of materias) {
-        promesaMisMaterias = this.materiaSrv.getMateria(materia).then(function (data) { console.log('la materia tiene' , data) ; mis_Materias.push(data) })
-      }
-      await promesaMisMaterias;
-      this.misMaterias=mis_Materias
-    console.log('Mis materias son estas: ', this.misMaterias)
-    if (this.misMaterias.length > 0)
-{    if (this.id_materia_activa == undefined || this.misMaterias.filter(materia => materia._id==this.id_materia_activa).length == 0 ) this.materiaSrv.obtenerComisionesDeMateria(this.misMaterias[0]._id);
-    else this.materiaSrv.obtenerComisionesDeMateria(this.id_materia_activa);
-      console.log('Pasé el if')
-    };
+    //   let promesaMisMaterias
+    //   let mis_Materias=[]
+    //   console.log('las materias son: ',materias)
+    // for (let materia of materias) {
+    //     promesaMisMaterias = this.materiaSrv.getMateria(materia).then(function (data) { console.log('la materia tiene' , data) ; mis_Materias.push(data) })
+    //   }
+    //   await promesaMisMaterias;
+    //   this.misMaterias=mis_Materias
+//     console.log('Mis materias son estas: ', this.materiaSrv.misMaterias)
+//     if (this.misMaterias.length > 0)
+// {    if (this.id_materia_activa == undefined || this.materiaSrv.misMaterias.filter(materia => materia.materia._id==this.id_materia_activa).length == 0 ) this.materiaSrv.obtenerComisionesDeMateria(this.misMaterias[0]._id);
+//     else this.materiaSrv.obtenerComisionesDeMateria(this.id_materia_activa);
+//       console.log('Pasé el if')
+//     };
     
-    console.log('las comisiones sin aula son: ', comisionesSinAula)
-    if (comisionesSinAula.length != 0) {
-      this.warningAulas(loading);
-    }
+    // console.log('las comisiones sin aula son: ', comisionesSinAula)
+    // if (comisionesSinAula.length != 0) {
+    //   this.warningAulas(loading);
+    // }
+    
   }
   
   public async elegirCarrera() {
@@ -123,8 +127,8 @@ export class MateriasPage implements OnInit {
     
     for (let mat of this.todasLasMaterias) {
       let bandera =true
-      for (let miMat of this.misMaterias) {
-        if (miMat._id == mat._id) bandera = false;
+      for (let miMat of this.materiaSrv.misMaterias) {
+        if (miMat.materia._id == mat._id) bandera = false;
       }
       if (bandera==true)
       {  cuerpo.push( {
@@ -165,7 +169,7 @@ export class MateriasPage implements OnInit {
     await alert.present();
   }
 
-  public async elegirComision(materia = this.materiaSrv.miMateria._id, comisionNueva = false) {
+  public async elegirComision(materia = this.materiaSrv.materiaActiva._id, comisionNueva = false) {
     let comisiones
     let cuerpo = [];
     this.materiaSrv.getComisionesDeMaterias(materia).subscribe(async datos => {
@@ -405,15 +409,17 @@ export class MateriasPage implements OnInit {
   }
 
   async mostrarComisiones(id_materia) {
-    if (this.id_materia_activa == id_materia) this.id_materia_activa = '';
-    else this.id_materia_activa = id_materia;
-    this.materiaSrv.obtenerComisionesDeMateria(id_materia);
-
-
-
-
-    
-  }
+    console.log(this.materiaSrv.materiaActiva);
+    if (this.materiaSrv.materiaActiva._id == id_materia) this.materiaSrv.materiaActiva= {nombre:'',_id:''};
+    else 
+    { this.id_materia_activa = id_materia;
+      for (let materiaAMostrar of this.materiaSrv.misMaterias) {
+      if (materiaAMostrar.materia._id == id_materia) {
+        this.materiaSrv.materiaActiva = materiaAMostrar.materia;
+        this.materiaSrv.misComisiones = materiaAMostrar.comisiones;
+      };
+    }
+  }}
 
 
   public async borrarComision(comision:Comision) {
