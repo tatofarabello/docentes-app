@@ -8,6 +8,7 @@ import { Materia } from '../model/materia';
 import { async } from '@angular/core/testing';
 import { Materia_Comision } from '../model/materia_comison';
 import { Aula_Comision } from '../model/aula_comision';
+import { MateriaConComision } from '../model/materia_con_comision';
 
 
 @Component({
@@ -32,13 +33,8 @@ export class MateriasPage implements OnInit {
     });
     loading.present();
     await this.profesorSrv.ngOnInit()
-   
       this.profesorSrv.id = sessionStorage.getItem('id');
-      this.materiaSrv.getMaterias().subscribe(datos => {
-        this.todasLasMaterias = datos
-        
-      });
-    await this.materiaSrv.getMateriasDeProfesor();
+      this.materiaSrv.ngOnInit()
     loading.dismiss()
   }
   
@@ -84,14 +80,14 @@ export class MateriasPage implements OnInit {
   public async elegirMateria() {
     let cuerpo = [];
     
-    for (let mat of this.todasLasMaterias) {
+    for (let mat of this.materiaSrv.todasLasMaterias) {
       let bandera =true
       for (let miMat of this.materiaSrv.misMaterias) {
         if (miMat.materia._id == mat._id) bandera = false;
       }
       if (bandera==true)
       {  cuerpo.push( {
-          name: 'checkbox'+mat.id,
+          name: 'checkbox'+mat._id,
           type: 'radio',
           label: mat.nombre,
           value: mat._id
@@ -131,7 +127,7 @@ export class MateriasPage implements OnInit {
   public async elegirComision(materia = this.materiaSrv.materiaActiva._id, comisionNueva = false) {
     let comisiones
     let cuerpo = [];
-    this.materiaSrv.getComisionesDeMaterias(materia).subscribe(async datos => {
+    this.materiaSrv.getComisionesDeMaterias(materia).then(async datos => {
       comisiones = datos
       console.log(comisiones)
      
@@ -311,10 +307,10 @@ export class MateriasPage implements OnInit {
     await alert.present();
   }
 
-  public async borrarMateria(materia: Materia) {
+  public async borrarMateria(materia: MateriaConComision) {
     const cuerpoAleta = {
       header: "Desmatricularse",
-      subHeader: "¿Seguro que desea desmatricularse de " + materia.nombre +'?',
+      subHeader: "¿Seguro que desea desmatricularse de " + materia.materia.nombre +'?',
       message: 'Perderá toda la información asociada a la materia',
       buttons: [
         {
@@ -332,16 +328,18 @@ export class MateriasPage implements OnInit {
             await promesaComision;
             console.log('Registros es:',registros)
             for (let inscripcion of registros) {
-              console.log('el id de la materia es: ', materia._id)
-              if (inscripcion.id_materia == materia._id){
+              console.log('el id de la materia es: ', materia.materia._id)
+              if (inscripcion.id_materia == materia.materia._id){
                 //borrar el registro de inscripcion
                 
-                await this.profesorSrv.desmatricularseAComision(inscripcion._id as String).then(nuevo =>{ nuevo; this.ngOnInit();});
+                await this.profesorSrv.desmatricularseAComision(inscripcion._id as String).then(nuevo => {
+                  nuevo; this.ngOnInit(); console.log('Confirm OK');
+              
+                });
               }
             }
             
-            console.log('Confirm OK');
-            this.ngOnInit();
+           
                           
           }
         }
@@ -401,9 +399,9 @@ export class MateriasPage implements OnInit {
           handler:async () => {
                       
             let inscripcion: Array<Profesor_Comision> = this.profesorSrv.inscripciones.filter(inscripcion => inscripcion.id_comision==comision._id )
-            await this.profesorSrv.desmatricularseAComision(inscripcion[0]._id as String).then(nuevo => { nuevo; this.ngOnInit();});
+            await this.profesorSrv.desmatricularseAComision(inscripcion[0]._id as String).then(nuevo => { nuevo; console.log('Confirm OK'); this.ngOnInit();});
             // console.log('borrara esta inscripcion: ', inscripcion)
-            console.log('Confirm OK');
+            
           }
             
             
