@@ -1,5 +1,8 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
     <ion-title>Configuración de clase</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -39,7 +42,7 @@
     <ion-label *ngIf="aulaDeComision!=undefined" position="floating"><b>Aula</b></ion-label>
     <ion-input *ngIf="aulaDeComision!=undefined" [(ngModel)]="aulaDeComision.nombre"></ion-input>
   </ion-item>
-  <ion-button (click)='confirmar()' color="primary" expand="block" [disabled]="fechaInicio==control||hora==control||duracion==control||aulaDeComision==undefined">Confirmar</ion-button>
+  <ion-button (click)='confirmar()' color="primary" expand="block" [disabled]="fechaInicio==control||hora==control||duracion==control||aulaDeComision==undefined" defaultHref="materias">Confirmar</ion-button>
 
 
 </ion-content>

@@ -21,14 +21,24 @@ export class ComisionPage implements OnInit {
     //duration: 2000,
       spinner: 'bubbles'
     });  
-    this.claseSrv.obtenerClasesDeComision(this.materiaSrv.comsionActiva._id).subscribe((a:Array<Clase>) => {
-      this.claseSrv.clasesActivas = a;
+
+    this.claseSrv.obtenerClasesDeComision(this.materiaSrv.comsionActiva._id).subscribe((a: Array<Clase>) => {
+      for (let i = 0; i < a.length-1; i++){
+        for (let j = 1; j < a.length; j++){
+          if (a[j].inicio < a[j - 1].inicio) {
+            let aux = a[j];
+            a[j] = a[j-1];
+            a[j-1] = aux;
+          }
+        }
+      }
+      
+      this.claseSrv.clasesActivas = a
       loading.dismiss();
       
     });
     loading.present();
     
-    console.log(this.claseSrv.clasesActivas) 
 
   };
 

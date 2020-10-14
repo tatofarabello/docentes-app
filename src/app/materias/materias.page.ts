@@ -336,7 +336,7 @@ export class MateriasPage implements OnInit {
               if (inscripcion.id_materia == materia._id){
                 //borrar el registro de inscripcion
                 
-                await this.profesorSrv.desmatricularseAComision(inscripcion._id as String).then(nuevo => nuevo);
+                await this.profesorSrv.desmatricularseAComision(inscripcion._id as String).then(nuevo =>{ nuevo; this.ngOnInit();});
               }
             }
             
@@ -401,10 +401,9 @@ export class MateriasPage implements OnInit {
           handler:async () => {
                       
             let inscripcion: Array<Profesor_Comision> = this.profesorSrv.inscripciones.filter(inscripcion => inscripcion.id_comision==comision._id )
-            await this.profesorSrv.desmatricularseAComision(inscripcion[0]._id as String).then(nuevo => nuevo);
+            await this.profesorSrv.desmatricularseAComision(inscripcion[0]._id as String).then(nuevo => { nuevo; this.ngOnInit();});
             // console.log('borrara esta inscripcion: ', inscripcion)
             console.log('Confirm OK');
-            this.ngOnInit();
           }
             
             
