@@ -17,7 +17,7 @@ export class ComisionPage implements OnInit {
   constructor(private activeteRoute:ActivatedRoute, private materiaSrv: MateriaService,private loading:LoadingController,private claseSrv:ClaseService) { }
 
   async ngOnInit() {    
-    const loading = await this.loading.create({  message: 'Cargando',
+    const loading = await this.loading.create({  message: 'Esto tarda un ratito',
     //duration: 2000,
       spinner: 'bubbles'
     });  
@@ -34,17 +34,42 @@ export class ComisionPage implements OnInit {
       }
       
       this.claseSrv.clasesActivas = a
-      loading.dismiss();
+      
       
     });
     loading.present();
     
 
+    this.claseSrv.obtenerAlumnosDeComision(this.materiaSrv.comsionActiva._id).subscribe((matrizDeAlumnos: Array<Array<String>>) =>
+    { 
+      this.claseSrv.AlumnosEnClases = matrizDeAlumnos;
+      loading.dismiss();
+    });
+    
+
+
   };
+
+
+  setClaseActiva(clase: Clase)
+  { 
+    if (clase ==this.claseSrv.claseActiva) {
+      this.claseSrv.claseActiva ={
+        _id: '',
+        inicio: '',
+        fin: '',
+        hora: '',
+        aula: ''
+      };
+    }
+    else this.claseSrv.claseActiva = clase;
+    console.log('la clase activa es: ', this.claseSrv.claseActiva);
+    this.claseSrv.indexOfClaseActiva = this.claseSrv.clasesActivas.indexOf(clase);
+  }
+
 
   configurarComision() {
     //if si tiene clases
-    
 
   }
 

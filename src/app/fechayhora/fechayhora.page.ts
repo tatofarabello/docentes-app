@@ -94,7 +94,7 @@ export class FechayhoraPage implements OnInit {
     console.log('registros guardados: ', año, mes, dia, horario[0], horario[1])
     
     this.claseSrv.crearClases(año, mes, dia, horario[0], horario[1], duracionArray[0], duracionArray[1], this.miComision._id, this.aulaDeComision.nombre, this.miComision.clasesTotales).subscribe(data=>console.log(data));
-    window.location.href = '/materias'
+    
     // console.log(this.fechaInicio, this.hora, this.aulaDeComision._id, this.duracion);
 }
 

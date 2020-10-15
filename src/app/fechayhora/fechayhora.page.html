@@ -42,7 +42,7 @@
     <ion-label *ngIf="aulaDeComision!=undefined" position="floating"><b>Aula</b></ion-label>
     <ion-input *ngIf="aulaDeComision!=undefined" [(ngModel)]="aulaDeComision.nombre"></ion-input>
   </ion-item>
-  <ion-button (click)='confirmar()' color="primary" expand="block" [disabled]="fechaInicio==control||hora==control||duracion==control||aulaDeComision==undefined">Confirmar</ion-button>
+  <ion-button (click)='confirmar()' color="primary" expand="block" [disabled]="fechaInicio==control||hora==control||duracion==control||aulaDeComision==undefined" [routerLink]="['/materias/',materiaSrv.comsionActiva._id]">Confirmar</ion-button>
 
 
 </ion-content>

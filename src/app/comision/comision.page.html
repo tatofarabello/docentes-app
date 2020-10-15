@@ -7,26 +7,30 @@
   </ion-toolbar>
 </ion-header>
 
+ 
+
 <ion-content>
-  <ion-item>
-    <h1>{{materiaSrv.comsionActiva.nombre}}</h1>
-  </ion-item>
+
+<ion-item>
+  <h1>{{materiaSrv.comsionActiva.nombre}}</h1>
+</ion-item>
+
 
   <ion-list *ngFor="let clase of claseSrv.clasesActivas">
-    <ion-item>  
-      <ion-label>Clase del {{clase.inicio | date: 'dd/MM/yyyy' }}</ion-label>
-      <!-- <ion-datetime displayFormat="DDDD MMM D, YYYY" value="{{clase.inicio}}"></ion-datetime>   -->
+
+  <ion-item>  
+    <ion-label (click)="setClaseActiva(clase);">Clase del {{clase.inicio | date: 'dd/MM/yyyy' }}</ion-label>
+  </ion-item>
+  <ion-list *ngIf="claseSrv.claseActiva._id==clase._id" >
+    <ion-item *ngFor="let alumnos of claseSrv.AlumnosEnClases[claseSrv.indexOfClaseActiva]" >  
+      <ion-label>{{alumnos}}</ion-label>
     </ion-item>
   </ion-list>
-
-
-  <ion-button color="success" expand="block" fill="clear" shape="round" [routerLink]="['ConfigurarClase']">
-    <ion-icon slot="start" size="2" name= "build-outline" ></ion-icon>
-      Configurar Comisión
-  </ion-button>
-
+</ion-list>
+<ion-button color="success" expand="block" fill="clear" shape="round" [routerLink]="['ConfigurarClase']">
+  <ion-icon slot="start" size="2" name= "build-outline" ></ion-icon>
+    Configurar Comisión
+</ion-button>
   
-
 </ion-content>
-
   

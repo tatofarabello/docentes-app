@@ -34,7 +34,7 @@ export class MateriasPage implements OnInit {
     loading.present();
     await this.profesorSrv.ngOnInit()
       this.profesorSrv.id = sessionStorage.getItem('id');
-      this.materiaSrv.ngOnInit()
+      await this.materiaSrv.ngOnInit()
     loading.dismiss()
   }
   

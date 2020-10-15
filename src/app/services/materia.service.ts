@@ -27,7 +27,8 @@ export class MateriaService implements OnInit{
   constructor(private httpClient: HttpClient, private alContrl: AlertController, private profesorSrv: ProfesorService) { }
   async ngOnInit() {
     
-    
+    this.todasLasMaterias = []
+    this.todasLasComisiones=[]
     this.getMaterias().subscribe(async (MateriasEnBaseDeDatos: Array<Materia>) => {
       for (let dato of MateriasEnBaseDeDatos) {
         this.todasLasMaterias.push(dato);
@@ -52,39 +53,25 @@ export class MateriaService implements OnInit{
 
   async getMateriasDeProfesor() {
     this.misMaterias = [];
-    let registros
-    let promesaComision = this.profesorSrv.getComisionesDeProfesor().then(function (data: Array<Profesor_Comision>) { registros = data });
-    await promesaComision;
-      let promesaMaterias
-    let materias = [];
-    let comisionesSinAula = [];
+    let promesaMaterias
+    let id_materiasDelPofesor = [];
       for (let registro of this.profesorSrv.inscripciones) {
-        promesaMaterias = this.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { materias.push(com.id_materia) });
-        await this.getAulaDeComision(registro.id_comision).then(function (com: Array <Aula_Comision> = []) {
-          console.log('com es:', com)
-          if (com.length == 0) {
-            comisionesSinAula.push(registro.id_comision)
-          }});
+        promesaMaterias = this.getMateriaDeComision(registro.id_comision).then(function (com:Materia_Comision) { id_materiasDelPofesor.push(com.id_materia) });
         await promesaMaterias;
-
       }
-   
-    materias = materias.filter(function (elem, index, self) {
+      id_materiasDelPofesor = id_materiasDelPofesor.filter(function (elem, index, self) {
       return index === self.indexOf(elem);
     })
     
       let promesaMisMaterias
       let mis_Materias=[]
-      console.log('el id de las materia del profesor son: ',materias)
-    for (let materia of materias) {
-      promesaMisMaterias = this.getMateria(materia).then(function (data) {mis_Materias.push(data) })
-      
-    }
-    await promesaMisMaterias; 
-    
-    
-    for (let materia of mis_Materias) this.misMaterias.push({ materia: materia, comisiones: [] });
-    for (let materia of materias) this.obtenerComisionesDeMateria(materia);
+      console.log('el id de las materia del profesor son: ',id_materiasDelPofesor)
+      for (let materia of id_materiasDelPofesor) {
+        promesaMisMaterias = this.getMateria(materia).then(function (data) {mis_Materias.push(data) })
+        await promesaMisMaterias; 
+      }
+      for (let materia of mis_Materias) this.misMaterias.push({ materia: materia, comisiones: [] });
+      for (let materia of id_materiasDelPofesor) this.obtenerComisionesDeMateria(materia);
       
       
   }
@@ -101,8 +88,8 @@ export class MateriaService implements OnInit{
     return await this.httpClient.get(this.path + '/listaDeComisiones/' + idMateria).toPromise();
   }
 
-  async getComisionesDeAlumno() {
-    return await this.httpClient.get(this.path + '/comisiones_de_alumno/' + this.profesorSrv.id).toPromise();
+  async getComisionesDePrfesor() {
+    return await this.httpClient.get(this.path + '/comisiones_de_profesor/' + this.profesorSrv.id).toPromise();
   }
 
 
