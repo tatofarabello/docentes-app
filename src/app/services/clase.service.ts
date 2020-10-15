@@ -44,7 +44,8 @@ export class ClaseService {
     return this.httpClient.get(this.path + '/clases_de_comision/'+id_comision)
   }
   obtenerAlumnosDeComision(id_comision: String) {
-    return this.httpClient.post(this.path + '/alumnos_en_clase/', id_comision);
+    console.log('id de la comision: ' ,id_comision)
+    return this.httpClient.post(this.path + '/alumnos_en_clase', { id_comision: id_comision });
   }
 
   setAlumnosEnClase()
