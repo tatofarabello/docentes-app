@@ -7,6 +7,14 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+
+  
+  <ion-item>
+    <div class="contenedor">
+    <ion-img class="tamanoImg" src='../../assets/icon/favicon.png'></ion-img>
+    </div>
+  </ion-item>
+
   <ion-button color="primary" expand="block" [routerLink]="['/clase']" [disabled]='profesor==profesor' >Ver alumnos en clase</ion-button>
   <ion-button color="primary" expand="block" [routerLink]="['/materias']">Administrar materias</ion-button>
 </ion-content>
