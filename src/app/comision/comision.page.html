@@ -27,7 +27,7 @@
     </ion-item>
   </ion-list>
 </ion-list>
-<ion-button color="success" expand="block" fill="clear" shape="round" [routerLink]="['ConfigurarClase']">
+<ion-button color="success" expand="block" fill="clear" shape="round" [routerLink]="['ConfigurarClase']" [disabled]='cantidadDeClases>0'>
   <ion-icon slot="start" size="2" name= "build-outline" ></ion-icon>
     Configurar Comisión
 </ion-button>

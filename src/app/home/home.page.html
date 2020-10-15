@@ -7,7 +7,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-button color="primary" expand="block" [routerLink]="['/clase']">Ver alumnos en clase</ion-button>
+  <ion-button color="primary" expand="block" [routerLink]="['/clase']" [disabled]='profesor==profesor' >Ver alumnos en clase</ion-button>
   <ion-button color="primary" expand="block" [routerLink]="['/materias']">Administrar materias</ion-button>
 </ion-content>
 

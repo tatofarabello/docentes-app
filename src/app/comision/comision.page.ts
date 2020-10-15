@@ -13,7 +13,7 @@ import { ClaseService } from '../services/clase.service';
   styleUrls: ['./comision.page.scss'],
 })
 export class ComisionPage implements OnInit {
-  
+  public cantidadDeClases;
   constructor(private activeteRoute:ActivatedRoute, private materiaSrv: MateriaService,private loading:LoadingController,private claseSrv:ClaseService) { }
 
   async ngOnInit() {    
@@ -35,6 +35,7 @@ export class ComisionPage implements OnInit {
       
       this.claseSrv.clasesActivas = a
       
+      this.cantidadDeClases = this.claseSrv.clasesActivas.length;
       
     });
     loading.present();
